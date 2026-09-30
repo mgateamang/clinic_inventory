@@ -1,0 +1,4 @@
+build/
+*.o
+*.moc
+test_inventory_config.ini

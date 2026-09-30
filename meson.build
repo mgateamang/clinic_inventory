@@ -1,0 +1,35 @@
+project('clinic_inventory', 'cpp',
+  version : '1.0.0',
+  default_options : ['warning_level=2', 'cpp_std=c++17']
+)
+
+qt6 = import('qt6')
+qt6_dep = dependency('qt6', modules : ['Core', 'Gui', 'Qml', 'Quick', 'Network'], required : true)
+
+inc = include_directories('include')
+
+# Preprocess MOC and QRC resources for main executable
+qt_files = qt6.preprocess(
+  moc_headers : ['include/inventory_controller.hpp'],
+  qresources : ['qrc/qml.qrc']
+)
+
+executable('clinic_inventory',
+  files('src/main.cpp', 'src/inventory_controller.cpp') + qt_files,
+  include_directories : inc,
+  dependencies : qt6_dep,
+  install : true
+)
+
+# Test runner (only needs MOC)
+test_moc = qt6.preprocess(
+  moc_headers : ['include/inventory_controller.hpp']
+)
+
+test_exec = executable('clinic_inventory_test',
+  files('tests/test_inventory.cpp', 'src/inventory_controller.cpp') + test_moc,
+  include_directories : inc,
+  dependencies : qt6_dep
+)
+
+test('inventory_tests', test_exec)
