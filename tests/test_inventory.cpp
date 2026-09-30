@@ -19,17 +19,23 @@ void runInventoryTests() {
     {
         aidans::InventoryController ctrl(testConfigFile);
         assert(ctrl.serverUrl() == "http://localhost:8080/api/v1");
+        assert(ctrl.redisHost() == "localhost");
+        assert(ctrl.redisPort() == 6379);
 
-        // Save a remote server IP
-        ctrl.saveServerUrl("http://192.168.1.120:9000/api/v1");
+        // Save a remote server IP and custom Redis port
+        ctrl.saveConfig("http://192.168.1.120:9000/api/v1", "192.168.1.50", 6380);
         assert(ctrl.serverUrl() == "http://192.168.1.120:9000/api/v1");
+        assert(ctrl.redisHost() == "192.168.1.50");
+        assert(ctrl.redisPort() == 6380);
     }
 
     // Launch a brand new controller pointing to the same config file
     {
         aidans::InventoryController ctrl2(testConfigFile);
         assert(ctrl2.serverUrl() == "http://192.168.1.120:9000/api/v1");
-        std::cout << "  -> Server IP dynamically persisted and reloaded successfully.\n";
+        assert(ctrl2.redisHost() == "192.168.1.50");
+        assert(ctrl2.redisPort() == 6380);
+        std::cout << "  -> Server IP and Redis settings dynamically persisted and reloaded successfully.\n";
     }
 
     aidans::InventoryController ctrl(testConfigFile);

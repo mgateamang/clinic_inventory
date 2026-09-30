@@ -52,8 +52,37 @@ ApplicationWindow {
                 color: controller.isServerOnline ? "#16a34a" : "#dc2626"
             }
 
+            // Real-Time Redis Sync Badge
+            Rectangle {
+                height: 24
+                radius: 12
+                color: controller.isRedisConnected ? "#dcfce7" : "#f1f5f9"
+                border.color: controller.isRedisConnected ? "#86efac" : "#cbd5e1"
+
+                RowLayout {
+                    anchors.fill: parent
+                    anchors.leftMargin: 8
+                    anchors.rightMargin: 8
+                    spacing: 6
+
+                    Rectangle {
+                        width: 8
+                        height: 8
+                        radius: 4
+                        color: controller.isRedisConnected ? "#16a34a" : "#94a3b8"
+                    }
+
+                    Label {
+                        text: controller.isRedisConnected ? "Real-Time Redis Sync" : "Redis Sync Inactive"
+                        font.pixelSize: 11
+                        font.bold: true
+                        color: controller.isRedisConnected ? "#15803d" : "#64748b"
+                    }
+                }
+            }
+
             Button {
-                text: "Refresh"
+                text: "Manual Refresh"
                 onClicked: controller.refreshData()
             }
         }
@@ -426,15 +455,63 @@ ApplicationWindow {
                     }
                 }
 
+                GroupBox {
+                    title: "Redis Real-Time Pub/Sub Broker"
+                    Layout.fillWidth: true
+
+                    ColumnLayout {
+                        anchors.fill: parent
+                        spacing: 10
+
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: 8
+
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                Label { text: "Redis Host / IP:" }
+                                TextField {
+                                    id: redisHostInput
+                                    text: controller.redisHost
+                                    placeholderText: "localhost"
+                                    Layout.fillWidth: true
+                                }
+                            }
+
+                            ColumnLayout {
+                                Layout.preferredWidth: 100
+                                Label { text: "Port:" }
+                                TextField {
+                                    id: redisPortInput
+                                    text: controller.redisPort.toString()
+                                    placeholderText: "6379"
+                                    Layout.fillWidth: true
+                                }
+                            }
+                        }
+
+                        Label {
+                            text: "Status: " + controller.redisStatus
+                            font.pixelSize: 12
+                            color: controller.isRedisConnected ? "#16a34a" : "#b45309"
+                        }
+                    }
+                }
+
                 RowLayout {
                     Layout.fillWidth: true
                     spacing: 12
 
                     Button {
+                        text: "Reconnect Redis"
+                        onClicked: controller.reconnectRedis()
+                    }
+
+                    Button {
                         text: "Save & Apply Settings"
                         highlighted: true
                         onClicked: {
-                            controller.saveServerUrl(serverUrlInput.text);
+                            controller.saveConfig(serverUrlInput.text, redisHostInput.text, parseInt(redisPortInput.text));
                             controller.refreshData();
                             root.activeTab = 0;
                         }
