@@ -192,30 +192,23 @@ ApplicationWindow {
                             anchors.margins: 10
                             spacing: 12
 
-                            ColumnLayout {
+                            Label {
+                                text: modelData.name + " (" + modelData.sku + ")"
+                                font.bold: true
+                                color: "#b91c1c"
                                 Layout.fillWidth: true
-                                spacing: 2
-                                Label {
-                                    text: modelData.name
-                                    font.bold: true
-                                    color: "#9a3412"
-                                }
-                                Label {
-                                    text: "SKU: " + modelData.sku + " &bull; Category: " + modelData.category
-                                    font.pixelSize: 11
-                                    color: "#78350f"
-                                }
+                                elide: Text.ElideRight
                             }
 
                             Label {
-                                text: "Current: " + modelData.stock_quantity + " / Threshold: " + modelData.reorder_threshold
+                                text: "Stock: " + modelData.stock_quantity + " (Min: " + modelData.reorder_threshold + ")"
                                 font.bold: true
                                 color: "#dc2626"
-                                Layout.preferredWidth: 200
+                                Layout.preferredWidth: 160
                             }
 
                             Button {
-                                text: "+ Restock Item"
+                                text: "+ Restock"
                                 highlighted: true
                                 onClicked: {
                                     root.selectedRestockItem = modelData;
@@ -382,70 +375,22 @@ ApplicationWindow {
                     }
                 }
 
-                GroupBox {
-                    title: "Redis Real-Time Pub/Sub Broker"
-                    Layout.fillWidth: true
-
-                    ColumnLayout {
-                        anchors.fill: parent
-                        spacing: 10
-
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: 8
-
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                Label { text: "Redis Host / IP:" }
-                                TextField {
-                                    id: redisHostInput
-                                    text: controller.redisHost
-                                    placeholderText: "localhost"
-                                    Layout.fillWidth: true
-                                }
-                            }
-
-                            ColumnLayout {
-                                Layout.preferredWidth: 100
-                                Label { text: "Port:" }
-                                TextField {
-                                    id: redisPortInput
-                                    text: controller.redisPort.toString()
-                                    placeholderText: "6379"
-                                    Layout.fillWidth: true
-                                }
-                            }
-                        }
-
-                        Label {
-                            text: "Status: " + controller.redisStatus
-                            font.pixelSize: 12
-                            color: controller.isRedisConnected ? "#16a34a" : "#b45309"
-                        }
-                    }
-                }
-
                 RowLayout {
                     Layout.fillWidth: true
                     spacing: 12
 
                     Button {
-                        text: "Reconnect Redis"
-                        onClicked: controller.reconnectRedis()
-                    }
-
-                    Button {
                         text: "Save & Apply Settings"
                         highlighted: true
                         onClicked: {
-                            controller.saveConfig(serverUrlInput.text, redisHostInput.text, parseInt(redisPortInput.text));
+                            controller.saveServerUrl(serverUrlInput.text);
                             controller.refreshData();
                             root.activeTab = 0;
                         }
                     }
 
                     Button {
-                        text: "Reset to Default (localhost)"
+                        text: "Reset to Default"
                         onClicked: {
                             serverUrlInput.text = "http://localhost:8080/api/v1";
                             controller.saveServerUrl(serverUrlInput.text);
