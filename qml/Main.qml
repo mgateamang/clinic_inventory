@@ -22,23 +22,14 @@ ApplicationWindow {
             Layout.fillWidth: true
             spacing: 12
 
-            ColumnLayout {
-                spacing: 2
-                Label {
-                    text: "Medical Inventory Management"
-                    font.pixelSize: 20
-                    font.bold: true
-                }
-                Label {
-                    text: "Elizabeth's Clinic Frankfurt &bull; AIDANS"
-                    font.pixelSize: 12
-                    color: "#64748b"
-                }
+            Label {
+                text: "Medical Inventory Management"
+                font.pixelSize: 20
+                font.bold: true
             }
 
             Item { Layout.fillWidth: true }
 
-            // Online / Offline Indicator
             Rectangle {
                 width: 10
                 height: 10
@@ -46,43 +37,14 @@ ApplicationWindow {
                 color: controller.isServerOnline ? "#16a34a" : "#dc2626"
             }
             Label {
-                text: controller.isServerOnline ? "Server Online" : "Server Offline"
+                text: controller.isServerOnline ? "Online" : "Offline"
                 font.bold: true
                 font.pixelSize: 12
                 color: controller.isServerOnline ? "#16a34a" : "#dc2626"
             }
 
-            // Real-Time Redis Sync Badge
-            Rectangle {
-                height: 24
-                radius: 12
-                color: controller.isRedisConnected ? "#dcfce7" : "#f1f5f9"
-                border.color: controller.isRedisConnected ? "#86efac" : "#cbd5e1"
-
-                RowLayout {
-                    anchors.fill: parent
-                    anchors.leftMargin: 8
-                    anchors.rightMargin: 8
-                    spacing: 6
-
-                    Rectangle {
-                        width: 8
-                        height: 8
-                        radius: 4
-                        color: controller.isRedisConnected ? "#16a34a" : "#94a3b8"
-                    }
-
-                    Label {
-                        text: controller.isRedisConnected ? "Real-Time Redis Sync" : "Redis Sync Inactive"
-                        font.pixelSize: 11
-                        font.bold: true
-                        color: controller.isRedisConnected ? "#15803d" : "#64748b"
-                    }
-                }
-            }
-
             Button {
-                text: "Manual Refresh"
+                text: "Refresh"
                 onClicked: controller.refreshData()
             }
         }
@@ -191,23 +153,6 @@ ApplicationWindow {
                                 Layout.preferredWidth: 80
                             }
 
-                            // Low Stock Badge
-                            Rectangle {
-                                width: 80
-                                height: 24
-                                radius: 4
-                                color: modelData.stock_quantity <= modelData.reorder_threshold ? "#fee2e2" : "#dcfce7"
-                                visible: true
-
-                                Label {
-                                    anchors.centerIn: parent
-                                    text: modelData.stock_quantity <= modelData.reorder_threshold ? "LOW STOCK" : "IN STOCK"
-                                    font.pixelSize: 10
-                                    font.bold: true
-                                    color: modelData.stock_quantity <= modelData.reorder_threshold ? "#dc2626" : "#16a34a"
-                                }
-                            }
-
                             Item { Layout.fillWidth: true }
 
                             Button {
@@ -228,24 +173,6 @@ ApplicationWindow {
             // TAB 1: Low Stock Alerts View
             ColumnLayout {
                 spacing: 8
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    height: 40
-                    color: "#fffbeb"
-                    border.color: "#fde68a"
-                    radius: 4
-
-                    RowLayout {
-                        anchors.fill: parent
-                        anchors.margins: 10
-                        Label {
-                            text: "⚠ Attention: The following supplies are at or below their reorder threshold!"
-                            font.bold: true
-                            color: "#b45309"
-                        }
-                    }
-                }
 
                 ListView {
                     id: lowList
@@ -616,77 +543,6 @@ ApplicationWindow {
                             controller.restockItem(root.selectedRestockItem.id, restockQtySpin.value, restockReasonInput.text);
                             restockPopup.close();
                         }
-                    }
-                }
-            }
-        }
-    }
-
-    // SERVER OFFLINE ERROR OVERLAY
-    Rectangle {
-        id: offlineOverlay
-        anchors.fill: parent
-        color: Qt.rgba(0, 0, 0, 0.6)
-        visible: !controller.isServerOnline && root.activeTab !== 3
-        z: 999
-
-        Rectangle {
-            anchors.centerIn: parent
-            width: 480
-            height: 280
-            radius: 8
-            color: "#ffffff"
-            border.color: "#f87171"
-            border.width: 2
-
-            ColumnLayout {
-                anchors.fill: parent
-                anchors.margins: 24
-                spacing: 14
-
-                Label {
-                    text: "⚠ Server Offline or Unreachable"
-                    font.bold: true
-                    font.pixelSize: 18
-                    color: "#dc2626"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                Label {
-                    text: "The clinic server appears to be offline or unreachable at:\n" + controller.serverUrl
-                    horizontalAlignment: Text.AlignHCenter
-                    color: "#475569"
-                    font.pixelSize: 13
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                Label {
-                    text: "Please verify that clinic_server is running, or reconfigure the server IP in Settings."
-                    font.pixelSize: 12
-                    color: "#64748b"
-                    horizontalAlignment: Text.AlignHCenter
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                Item { Layout.fillHeight: true }
-
-                RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 12
-
-                    Button {
-                        text: "⚙ Configure Server IP"
-                        Layout.fillWidth: true
-                        onClicked: {
-                            root.activeTab = 3; // Switch to settings
-                        }
-                    }
-
-                    Button {
-                        text: "🔄 Retry Connection"
-                        highlighted: true
-                        Layout.fillWidth: true
-                        onClicked: controller.refreshData()
                     }
                 }
             }
