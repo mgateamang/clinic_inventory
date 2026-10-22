@@ -1,3 +1,11 @@
+/**
+ * @file inventory_controller.cpp
+ * @brief Implementation of InventoryController for Qt6 / QML client.
+ *
+ * Implements non-blocking HTTP network calls to clinic_server, JSON parsing
+ * of inventory catalogs, safety stock calculation, and INI configuration management.
+ */
+
 #include "inventory_controller.hpp"
 #include <QSettings>
 #include <QJsonDocument>
@@ -8,6 +16,9 @@
 
 namespace aidans {
 
+/**
+ * @brief Constructs the controller and reads local configuration.
+ */
 InventoryController::InventoryController(const QString& configFilePath, QObject* parent)
     : QObject(parent), m_configPath(configFilePath) {
     loadConfig();
