@@ -1,164 +1,101 @@
-#pragma once
+#pragma once // Ensure header is included only once per translation unit
+
+#include <QObject> // Include base Qt object model header
+#include <QString> // Include Qt Unicode string class
+#include <QVariantList> // Include Qt variant list collection
+#include <QVariantMap> // Include Qt variant map dictionary
+#include <QNetworkAccessManager> // Include Qt network access coordinator
+#include <QNetworkReply> // Include Qt network reply handler
+#include <QTcpSocket> // Include Qt TCP socket for real-time channels
+#include <QTimer> // Include Qt timer for scheduled callbacks
+
+namespace aidans { // Enclosing clinical suite namespace
 
 /**
- * @file inventory_controller.hpp
- * @brief ViewModel Controller for AIDANS Medical Inventory Management Client.
- *
- * Exposes a reactive Qt C++ interface to declarative QML UI views.
- * Responsibilities:
- *  - Communicates asynchronously with the clinic_server REST API via QNetworkAccessManager.
- *  - Maintains live inventory catalog and calculated low-stock alerts.
- *  - Reads and persists local connection settings from/to config.ini.
- *  - Performs non-blocking health checks and connection latency diagnostics.
- *  - Validates and dispatches stock replenishment (restock) requests.
+ * @class InventoryController
+ * @brief ViewModel controller for medical inventory client.
  */
+class InventoryController : public QObject { // Inherit QObject for meta-object system
+    Q_OBJECT // Macro enabling signals, slots, and properties
 
-#include <QObject>
-#include <QString>
-#include <QVariantList>
-#include <QVariantMap>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QTcpSocket>
-#include <QTimer>
+    Q_PROPERTY(QVariantList catalog READ catalog NOTIFY catalogChanged) // Expose catalog list to QML
+    Q_PROPERTY(QVariantList lowStockItems READ lowStockItems NOTIFY lowStockItemsChanged) // Expose low stock alerts
+    Q_PROPERTY(QString statusMessage READ statusMessage NOTIFY statusMessageChanged) // Expose status message text
+    Q_PROPERTY(bool isBusy READ isBusy NOTIFY isBusyChanged) // Expose network busy state flag
+    Q_PROPERTY(bool isServerOnline READ isServerOnline NOTIFY isServerOnlineChanged) // Expose server connectivity state
+    Q_PROPERTY(QString serverUrl READ serverUrl NOTIFY serverUrlChanged) // Expose current REST API server URL
+    Q_PROPERTY(QString connectionStatus READ connectionStatus NOTIFY connectionStatusChanged) // Expose connection status
+    Q_PROPERTY(QString redisHost READ redisHost NOTIFY redisConfigChanged) // Expose cache host string
+    Q_PROPERTY(int redisPort READ redisPort NOTIFY redisConfigChanged) // Expose cache port integer
+    Q_PROPERTY(bool isRedisConnected READ isRedisConnected NOTIFY isRedisConnectedChanged) // Expose cache connection state
+    Q_PROPERTY(QString redisStatus READ redisStatus NOTIFY redisStatusChanged) // Expose human-readable cache status
 
-namespace aidans {
+public: // Public interface methods
+    explicit InventoryController(const QString& configFilePath = "config.ini", QObject* parent = nullptr); // Constructor
+    ~InventoryController() override = default; // Default destructor
 
-class InventoryController : public QObject {
-    Q_OBJECT
+    QVariantList catalog() const { return m_catalog; } // Getter for catalog items
+    QVariantList lowStockItems() const { return m_lowStockItems; } // Getter for items below reorder threshold
+    QString statusMessage() const { return m_statusMessage; } // Getter for UI status message
+    bool isBusy() const { return m_isBusy; } // Getter for busy network flag
+    bool isServerOnline() const { return m_isServerOnline; } // Getter for server online flag
+    QString serverUrl() const { return m_serverUrl; } // Getter for active backend server URL
+    QString connectionStatus() const { return m_connectionStatus; } // Getter for connection status text
+    QString redisHost() const { return m_redisHost; } // Getter for cache host
+    int redisPort() const { return m_redisPort; } // Getter for cache port
+    bool isRedisConnected() const { return m_isRedisConnected; } // Getter for cache connection state
+    QString redisStatus() const { return m_redisStatus; } // Getter for cache status description
 
-    // Reactive properties exposed directly to QML binding expressions
-    Q_PROPERTY(QVariantList catalog READ catalog NOTIFY catalogChanged)
-    Q_PROPERTY(QVariantList lowStockItems READ lowStockItems NOTIFY lowStockItemsChanged)
-    Q_PROPERTY(QString statusMessage READ statusMessage NOTIFY statusMessageChanged)
-    Q_PROPERTY(bool isBusy READ isBusy NOTIFY isBusyChanged)
-    Q_PROPERTY(bool isServerOnline READ isServerOnline NOTIFY isServerOnlineChanged)
-    Q_PROPERTY(QString serverUrl READ serverUrl NOTIFY serverUrlChanged)
-    Q_PROPERTY(QString connectionStatus READ connectionStatus NOTIFY connectionStatusChanged)
-    Q_PROPERTY(QString redisHost READ redisHost NOTIFY redisConfigChanged)
-    Q_PROPERTY(int redisPort READ redisPort NOTIFY redisConfigChanged)
-    Q_PROPERTY(bool isRedisConnected READ isRedisConnected NOTIFY isRedisConnectedChanged)
-    Q_PROPERTY(QString redisStatus READ redisStatus NOTIFY redisStatusChanged)
+    Q_INVOKABLE void loadConfig(); // Load INI configuration from disk
+    Q_INVOKABLE void saveServerUrl(const QString& newUrl); // Persist updated server URL
+    Q_INVOKABLE void saveConfig(const QString& url, const QString& redisHost, int redisPort); // Save full configuration
+    Q_INVOKABLE void testConnection(const QString& targetUrl); // Test server connectivity asynchronously
+    Q_INVOKABLE void reconnectRedis(); // Attempt cache reconnection
+    Q_INVOKABLE void refreshData(); // Refresh inventory data from backend API
+    Q_INVOKABLE bool restockItem(int itemId, int quantity, const QString& reason); // Submit restock request
+    Q_INVOKABLE bool createItem(const QString& sku, const QString& name, const QString& category, double unitPrice, int stock, int threshold, const QString& unit); // Create new inventory item
 
-public:
-    /**
-     * @brief Constructs controller, loads INI configuration, and checks server connectivity.
-     * @param configFilePath Path to local INI configuration file.
-     * @param parent Qt parent object hierarchy pointer.
-     */
-    explicit InventoryController(const QString& configFilePath = "config.ini", QObject* parent = nullptr);
-    ~InventoryController() override = default;
+    // Filter helper
+    static QVariantList filterLowStock(const QVariantList& items); // Static utility to filter low stock items
 
-    // Property Getters
-    QVariantList catalog() const { return m_catalog; }
-    QVariantList lowStockItems() const { return m_lowStockItems; }
-    QString statusMessage() const { return m_statusMessage; }
-    bool isBusy() const { return m_isBusy; }
-    bool isServerOnline() const { return m_isServerOnline; }
-    QString serverUrl() const { return m_serverUrl; }
-    QString connectionStatus() const { return m_connectionStatus; }
-    QString redisHost() const { return m_redisHost; }
-    int redisPort() const { return m_redisPort; }
-    bool isRedisConnected() const { return m_isRedisConnected; }
-    QString redisStatus() const { return m_redisStatus; }
+signals: // Qt notification signals
+    void catalogChanged(); // Emitted when catalog updates
+    void lowStockItemsChanged(); // Emitted when low stock list changes
+    void statusMessageChanged(); // Emitted when status message updates
+    void isBusyChanged(); // Emitted when busy state toggles
+    void isServerOnlineChanged(); // Emitted when server connectivity changes
+    void serverUrlChanged(); // Emitted when server URL changes
+    void connectionStatusChanged(); // Emitted when connection status string changes
+    void redisConfigChanged(); // Emitted when cache configuration changes
+    void isRedisConnectedChanged(); // Emitted when cache connection status changes
+    void redisStatusChanged(); // Emitted when cache description changes
+    void restockCompleted(int itemId, int newStock); // Emitted upon successful restocking
+    void itemCreated(const QString& sku); // Emitted when a new item is created
 
-    /**
-     * @brief Loads server base URL and parameters from disk config.ini.
-     */
-    Q_INVOKABLE void loadConfig();
+private: // Private member state and helpers
+    QString m_configPath; // Path to config.ini file
+    QString m_serverUrl{"http://localhost:8080/api/v1"}; // Active backend server URL
+    QString m_redisHost{"localhost"}; // Cache host string
+    int m_redisPort{6379}; // Cache port number
+    bool m_isRedisConnected{false}; // Cache connection flag
+    QString m_redisStatus{"Disconnected"}; // Cache status display string
+    QTcpSocket* m_redisSocket{nullptr}; // TCP socket for cache
+    QTimer* m_redisReconnectTimer{nullptr}; // Reconnect timer for cache
 
-    /**
-     * @brief Persists new server base URL to disk and triggers immediate reconnect.
-     * @param newUrl Target backend endpoint (e.g. "http://127.0.0.1:8080").
-     */
-    Q_INVOKABLE void saveServerUrl(const QString& newUrl);
+    QVariantList m_catalog; // Cached list of inventory items
+    QVariantList m_lowStockItems; // Cached list of low stock items
+    QString m_statusMessage; // Active status message text
+    QString m_connectionStatus; // Detailed connection diagnostic text
+    bool m_isBusy{false}; // Busy network flag
+    bool m_isServerOnline{true}; // Server availability status flag
+    QNetworkAccessManager m_netManager; // Network manager instance
 
-    /**
-     * @brief Saves extended network configuration to config.ini.
-     */
-    Q_INVOKABLE void saveConfig(const QString& url, const QString& redisHost, int redisPort);
-
-    /**
-     * @brief Performs an asynchronous probe to verify server reachability.
-     * @param targetUrl Server URL to test.
-     */
-    Q_INVOKABLE void testConnection(const QString& targetUrl);
-
-    /**
-     * @brief Diagnostic redis reconnect stub (retained for backward compatibility).
-     */
-    Q_INVOKABLE void reconnectRedis();
-
-    /**
-     * @brief Asynchronously fetches the latest medical supply catalog from backend.
-     */
-    Q_INVOKABLE void refreshData();
-
-    /**
-     * @brief Restocks an inventory item with an audited increment and reason.
-     * @param itemId Unique ID of item.
-     * @param quantity Number of units added.
-     * @param reason Audit justification (e.g., "PO #1042 Delivery").
-     * @return true if network request successfully queued.
-     */
-    Q_INVOKABLE bool restockItem(int itemId, int quantity, const QString& reason);
-
-    /**
-     * @brief Adds a brand new medicine or medical supply item into the catalog.
-     * @param sku Unique barcode / stock keeping unit.
-     * @param name Descriptive item name.
-     * @param category Classification category.
-     * @param unitPrice Selling price per unit.
-     * @param stock Initial inventory quantity on hand.
-     * @param threshold Minimum safety stock limit.
-     * @param unit Packaging unit ("bottles", "tablets", "boxes").
-     * @return true if request dispatched.
-     */
-    Q_INVOKABLE bool createItem(const QString& sku, const QString& name, const QString& category,
-                                double unitPrice, int stock, int threshold, const QString& unit);
-
-    /**
-     * @brief Pure algorithmic helper to filter out items running low on stock.
-     * @param items Complete list of catalog items.
-     * @return Subset of items where stock_quantity <= reorder_threshold.
-     */
-    static QVariantList filterLowStock(const QVariantList& items);
-
-signals:
-    void catalogChanged();
-    void lowStockItemsChanged();
-    void statusMessageChanged();
-    void isBusyChanged();
-    void isServerOnlineChanged();
-    void serverUrlChanged();
-    void connectionStatusChanged();
-    void redisConfigChanged();
-    void isRedisConnectedChanged();
-    void redisStatusChanged();
-    void restockCompleted(bool success, const QString& message);
-    void itemCreated(bool success, const QString& message);
-
-private:
-    QString m_configFilePath{"config.ini"};
-    QString m_serverUrl{"http://localhost:8080"};
-    QString m_redisHost{"127.0.0.1"};
-    int m_redisPort{6379};
-    bool m_isRedisConnected{false};
-    QString m_redisStatus{"Disabled"};
-
-    QVariantList m_catalog;
-    QVariantList m_lowStockItems;
-    QString m_statusMessage{"Ready"};
-    bool m_isBusy{false};
-    bool m_isServerOnline{false};
-    QString m_connectionStatus{"Checking..."};
-
-    QNetworkAccessManager* m_netManager{nullptr};
-    QTcpSocket* m_redisSocket{nullptr};
-    QTimer* m_redisReconnectTimer{nullptr};
-
-    void checkServerHealth();
-    void updateLowStockItems();
-};
+    void setStatus(const QString& msg); // Set status message helper
+    void setBusy(bool busy); // Set busy state helper
+    void setServerOnline(bool online); // Set server availability helper
+    void setConnectionStatus(const QString& status); // Set diagnostic connection text helper
+    void initRedisSubscriber(); // Initialize cache subscriber channel
+    void scheduleRedisReconnect(); // Schedule cache reconnection attempt
+}; // End of InventoryController class definition
 
 } // namespace aidans

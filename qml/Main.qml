@@ -1,500 +1,500 @@
-import QtQuick
-import QtQuick.Controls
-import QtQuick.Layouts
+import QtQuick // Import module dependency for runtime execution
+import QtQuick.Controls // Import module dependency for runtime execution
+import QtQuick.Layouts // Import module dependency for runtime execution
 
-ApplicationWindow {
-    id: root
-    visible: true
-    width: 960
-    height: 700
-    title: "AIDANS - Inventory & Supplies Management"
+ApplicationWindow { // Execute clinical workflow step
+    id: root // Execute clinical workflow step
+    visible: true // Execute clinical workflow step
+    width: 960 // Execute clinical workflow step
+    height: 700 // Execute clinical workflow step
+    title: "AIDANS - Inventory & Supplies Management" // Execute clinical workflow step
 
     property int activeTab: 0 // 0: All Stock, 1: Low Stock Alerts, 2: New Item, 3: Settings
-    property var selectedRestockItem: null
+    property var selectedRestockItem: null // Execute clinical workflow step
 
-    ColumnLayout {
-        anchors.fill: parent
-        anchors.margins: 16
-        spacing: 12
+    ColumnLayout { // Execute clinical workflow step
+        anchors.fill: parent // Execute clinical workflow step
+        anchors.margins: 16 // Execute clinical workflow step
+        spacing: 12 // Execute clinical workflow step
 
         // Header & Navigation Bar
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: 12
+        RowLayout { // Execute clinical workflow step
+            Layout.fillWidth: true // Execute clinical workflow step
+            spacing: 12 // Execute clinical workflow step
 
-            Label {
-                text: "Medical Inventory Management"
-                font.pixelSize: 20
-                font.bold: true
-            }
+            Label { // Execute clinical workflow step
+                text: "Medical Inventory Management" // Execute clinical workflow step
+                font.pixelSize: 20 // Execute clinical workflow step
+                font.bold: true // Execute clinical workflow step
+            } // Close active scope block
 
-            Item { Layout.fillWidth: true }
+            Item { Layout.fillWidth: true } // Execute clinical workflow step
 
-            Rectangle {
-                width: 10
-                height: 10
-                radius: 5
-                color: controller.isServerOnline ? "#16a34a" : "#dc2626"
-            }
-            Label {
-                text: controller.isServerOnline ? "Online" : "Offline"
-                font.bold: true
-                font.pixelSize: 12
-                color: controller.isServerOnline ? "#16a34a" : "#dc2626"
-            }
+            Rectangle { // Execute clinical workflow step
+                width: 10 // Execute clinical workflow step
+                height: 10 // Execute clinical workflow step
+                radius: 5 // Execute clinical workflow step
+                color: controller.isServerOnline ? "#16a34a" : "#dc2626" // Execute clinical workflow step
+            } // Close active scope block
+            Label { // Execute clinical workflow step
+                text: controller.isServerOnline ? "Online" : "Offline" // Execute clinical workflow step
+                font.bold: true // Execute clinical workflow step
+                font.pixelSize: 12 // Execute clinical workflow step
+                color: controller.isServerOnline ? "#16a34a" : "#dc2626" // Execute clinical workflow step
+            } // Close active scope block
 
-            Button {
-                text: "Refresh"
-                onClicked: controller.refreshData()
-            }
-        }
+            Button { // Execute clinical workflow step
+                text: "Refresh" // Execute clinical workflow step
+                onClicked: controller.refreshData() // Execute clinical workflow step
+            } // Close active scope block
+        } // Close active scope block
 
         // Navigation Tabs
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: 8
+        RowLayout { // Execute clinical workflow step
+            Layout.fillWidth: true // Execute clinical workflow step
+            spacing: 8 // Execute clinical workflow step
 
-            Button {
-                text: "All Stock (" + controller.catalog.length + ")"
-                highlighted: root.activeTab === 0
-                onClicked: root.activeTab = 0
-            }
+            Button { // Execute clinical workflow step
+                text: "All Stock (" + controller.catalog.length + ")" // Execute clinical workflow step
+                highlighted: root.activeTab === 0 // Assign value to target variable
+                onClicked: root.activeTab = 0 // Assign value to target variable
+            } // Close active scope block
 
-            Button {
-                text: "⚠ Low Stock Alerts (" + controller.lowStockItems.length + ")"
-                highlighted: root.activeTab === 1
-                onClicked: root.activeTab = 1
-            }
+            Button { // Execute clinical workflow step
+                text: "⚠ Low Stock Alerts (" + controller.lowStockItems.length + ")" // Execute clinical workflow step
+                highlighted: root.activeTab === 1 // Assign value to target variable
+                onClicked: root.activeTab = 1 // Assign value to target variable
+            } // Close active scope block
 
-            Button {
-                text: "+ New Item"
-                highlighted: root.activeTab === 2
-                onClicked: root.activeTab = 2
-            }
+            Button { // Execute clinical workflow step
+                text: "+ New Item" // Execute clinical workflow step
+                highlighted: root.activeTab === 2 // Assign value to target variable
+                onClicked: root.activeTab = 2 // Assign value to target variable
+            } // Close active scope block
 
-            Button {
-                text: "⚙ Settings"
-                highlighted: root.activeTab === 3
-                onClicked: root.activeTab = 3
-            }
-        }
+            Button { // Execute clinical workflow step
+                text: "⚙ Settings" // Execute clinical workflow step
+                highlighted: root.activeTab === 3 // Assign value to target variable
+                onClicked: root.activeTab = 3 // Assign value to target variable
+            } // Close active scope block
+        } // Close active scope block
 
         // Content Views
-        StackLayout {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            currentIndex: root.activeTab
+        StackLayout { // Execute clinical workflow step
+            Layout.fillWidth: true // Execute clinical workflow step
+            Layout.fillHeight: true // Execute clinical workflow step
+            currentIndex: root.activeTab // Execute clinical workflow step
 
             // TAB 0: All Stock View
-            ColumnLayout {
-                spacing: 8
+            ColumnLayout { // Execute clinical workflow step
+                spacing: 8 // Execute clinical workflow step
 
-                TextField {
-                    id: searchInput
-                    placeholderText: "Search item by name, SKU, or category..."
-                    Layout.fillWidth: true
-                }
+                TextField { // Execute clinical workflow step
+                    id: searchInput // Execute clinical workflow step
+                    placeholderText: "Search item by name, SKU, or category..." // Execute clinical workflow step
+                    Layout.fillWidth: true // Execute clinical workflow step
+                } // Close active scope block
 
-                ListView {
-                    id: catalogList
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    clip: true
-                    model: controller.catalog
-                    delegate: Rectangle {
-                        width: catalogList.width
-                        height: 52
-                        color: index % 2 === 0 ? "#f8fafc" : "#ffffff"
-                        border.color: modelData.stock_quantity <= modelData.reorder_threshold ? "#fed7aa" : "#e2e8f0"
-                        radius: 4
+                ListView { // Execute clinical workflow step
+                    id: catalogList // Execute clinical workflow step
+                    Layout.fillWidth: true // Execute clinical workflow step
+                    Layout.fillHeight: true // Execute clinical workflow step
+                    clip: true // Execute clinical workflow step
+                    model: controller.catalog // Execute clinical workflow step
+                    delegate: Rectangle { // Execute clinical workflow step
+                        width: catalogList.width // Execute clinical workflow step
+                        height: 52 // Execute clinical workflow step
+                        color: index % 2 === 0 ? "#f8fafc" : "#ffffff" // Assign value to target variable
+                        border.color: modelData.stock_quantity <= modelData.reorder_threshold ? "#fed7aa" : "#e2e8f0" // Assign value to target variable
+                        radius: 4 // Execute clinical workflow step
 
-                        visible: searchInput.text.trim().length === 0 ||
-                                 modelData.name.toLowerCase().includes(searchInput.text.toLowerCase()) ||
-                                 modelData.sku.toLowerCase().includes(searchInput.text.toLowerCase()) ||
-                                 modelData.category.toLowerCase().includes(searchInput.text.toLowerCase())
+                        visible: searchInput.text.trim().length === 0 || // Assign value to target variable
+                                 modelData.name.toLowerCase().includes(searchInput.text.toLowerCase()) || // Execute clinical workflow step
+                                 modelData.sku.toLowerCase().includes(searchInput.text.toLowerCase()) || // Execute clinical workflow step
+                                 modelData.category.toLowerCase().includes(searchInput.text.toLowerCase()) // Execute clinical workflow step
 
-                        RowLayout {
-                            anchors.fill: parent
-                            anchors.margins: 10
-                            spacing: 12
+                        RowLayout { // Execute clinical workflow step
+                            anchors.fill: parent // Execute clinical workflow step
+                            anchors.margins: 10 // Execute clinical workflow step
+                            spacing: 12 // Execute clinical workflow step
 
-                            ColumnLayout {
-                                Layout.preferredWidth: 260
-                                spacing: 2
-                                Label {
-                                    text: modelData.name
-                                    font.bold: true
-                                    elide: Text.ElideRight
-                                    Layout.fillWidth: true
-                                }
-                                Label {
-                                    text: modelData.sku + " &bull; " + modelData.category
-                                    font.pixelSize: 11
-                                    color: "#64748b"
-                                }
-                            }
+                            ColumnLayout { // Execute clinical workflow step
+                                Layout.preferredWidth: 260 // Execute clinical workflow step
+                                spacing: 2 // Execute clinical workflow step
+                                Label { // Execute clinical workflow step
+                                    text: modelData.name // Execute clinical workflow step
+                                    font.bold: true // Execute clinical workflow step
+                                    elide: Text.ElideRight // Execute clinical workflow step
+                                    Layout.fillWidth: true // Execute clinical workflow step
+                                } // Close active scope block
+                                Label { // Execute clinical workflow step
+                                    text: modelData.sku + " &bull; " + modelData.category // Execute clinical workflow step
+                                    font.pixelSize: 11 // Execute clinical workflow step
+                                    color: "#64748b" // Execute clinical workflow step
+                                } // Close active scope block
+                            } // Close active scope block
 
-                            Label {
-                                text: "Stock: " + modelData.stock_quantity + " " + modelData.unit
-                                font.bold: true
-                                color: modelData.stock_quantity <= modelData.reorder_threshold ? "#dc2626" : "#0f172a"
-                                Layout.preferredWidth: 120
-                            }
+                            Label { // Execute clinical workflow step
+                                text: "Stock: " + modelData.stock_quantity + " " + modelData.unit // Execute clinical workflow step
+                                font.bold: true // Execute clinical workflow step
+                                color: modelData.stock_quantity <= modelData.reorder_threshold ? "#dc2626" : "#0f172a" // Assign value to target variable
+                                Layout.preferredWidth: 120 // Execute clinical workflow step
+                            } // Close active scope block
 
-                            Label {
-                                text: "Min: " + modelData.reorder_threshold
-                                font.pixelSize: 12
-                                color: "#64748b"
-                                Layout.preferredWidth: 80
-                            }
+                            Label { // Execute clinical workflow step
+                                text: "Min: " + modelData.reorder_threshold // Execute clinical workflow step
+                                font.pixelSize: 12 // Execute clinical workflow step
+                                color: "#64748b" // Execute clinical workflow step
+                                Layout.preferredWidth: 80 // Execute clinical workflow step
+                            } // Close active scope block
 
-                            Label {
-                                text: Number(modelData.unit_price).toFixed(2) + " €"
-                                Layout.preferredWidth: 80
-                            }
+                            Label { // Execute clinical workflow step
+                                text: Number(modelData.unit_price).toFixed(2) + " €" // Execute clinical workflow step
+                                Layout.preferredWidth: 80 // Execute clinical workflow step
+                            } // Close active scope block
 
-                            Item { Layout.fillWidth: true }
+                            Item { Layout.fillWidth: true } // Execute clinical workflow step
 
-                            Button {
-                                text: "+ Restock"
-                                highlighted: modelData.stock_quantity <= modelData.reorder_threshold
-                                onClicked: {
-                                    root.selectedRestockItem = modelData;
-                                    restockQtySpin.value = 20;
-                                    restockReasonInput.text = "Batch replenishment";
-                                    restockPopup.open();
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+                            Button { // Execute clinical workflow step
+                                text: "+ Restock" // Execute clinical workflow step
+                                highlighted: modelData.stock_quantity <= modelData.reorder_threshold // Assign value to target variable
+                                onClicked: { // Execute clinical workflow step
+                                    root.selectedRestockItem = modelData; // Assign value to target variable
+                                    restockQtySpin.value = 20; // Assign value to target variable
+                                    restockReasonInput.text = "Batch replenishment"; // Assign value to target variable
+                                    restockPopup.open(); // Execute clinical workflow step
+                                } // Close active scope block
+                            } // Close active scope block
+                        } // Close active scope block
+                    } // Close active scope block
+                } // Close active scope block
+            } // Close active scope block
 
             // TAB 1: Low Stock Alerts View
-            ColumnLayout {
-                spacing: 8
+            ColumnLayout { // Execute clinical workflow step
+                spacing: 8 // Execute clinical workflow step
 
-                ListView {
-                    id: lowList
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    clip: true
-                    model: controller.lowStockItems
-                    delegate: Rectangle {
-                        width: lowList.width
-                        height: 56
-                        color: "#fff7ed"
-                        border.color: "#fdba74"
-                        radius: 4
+                ListView { // Execute clinical workflow step
+                    id: lowList // Execute clinical workflow step
+                    Layout.fillWidth: true // Execute clinical workflow step
+                    Layout.fillHeight: true // Execute clinical workflow step
+                    clip: true // Execute clinical workflow step
+                    model: controller.lowStockItems // Execute clinical workflow step
+                    delegate: Rectangle { // Execute clinical workflow step
+                        width: lowList.width // Execute clinical workflow step
+                        height: 56 // Execute clinical workflow step
+                        color: "#fff7ed" // Execute clinical workflow step
+                        border.color: "#fdba74" // Execute clinical workflow step
+                        radius: 4 // Execute clinical workflow step
 
-                        RowLayout {
-                            anchors.fill: parent
-                            anchors.margins: 10
-                            spacing: 12
+                        RowLayout { // Execute clinical workflow step
+                            anchors.fill: parent // Execute clinical workflow step
+                            anchors.margins: 10 // Execute clinical workflow step
+                            spacing: 12 // Execute clinical workflow step
 
-                            Label {
-                                text: modelData.name + " (" + modelData.sku + ")"
-                                font.bold: true
-                                color: "#b91c1c"
-                                Layout.fillWidth: true
-                                elide: Text.ElideRight
-                            }
+                            Label { // Execute clinical workflow step
+                                text: modelData.name + " (" + modelData.sku + ")" // Execute clinical workflow step
+                                font.bold: true // Execute clinical workflow step
+                                color: "#b91c1c" // Execute clinical workflow step
+                                Layout.fillWidth: true // Execute clinical workflow step
+                                elide: Text.ElideRight // Execute clinical workflow step
+                            } // Close active scope block
 
-                            Label {
-                                text: "Stock: " + modelData.stock_quantity + " (Min: " + modelData.reorder_threshold + ")"
-                                font.bold: true
-                                color: "#dc2626"
-                                Layout.preferredWidth: 160
-                            }
+                            Label { // Execute clinical workflow step
+                                text: "Stock: " + modelData.stock_quantity + " (Min: " + modelData.reorder_threshold + ")" // Execute clinical workflow step
+                                font.bold: true // Execute clinical workflow step
+                                color: "#dc2626" // Execute clinical workflow step
+                                Layout.preferredWidth: 160 // Execute clinical workflow step
+                            } // Close active scope block
 
-                            Button {
-                                text: "+ Restock"
-                                highlighted: true
-                                onClicked: {
-                                    root.selectedRestockItem = modelData;
-                                    restockQtySpin.value = modelData.reorder_threshold * 2;
-                                    restockReasonInput.text = "Urgent low stock reorder";
-                                    restockPopup.open();
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+                            Button { // Execute clinical workflow step
+                                text: "+ Restock" // Execute clinical workflow step
+                                highlighted: true // Execute clinical workflow step
+                                onClicked: { // Execute clinical workflow step
+                                    root.selectedRestockItem = modelData; // Assign value to target variable
+                                    restockQtySpin.value = modelData.reorder_threshold * 2; // Assign value to target variable
+                                    restockReasonInput.text = "Urgent low stock reorder"; // Assign value to target variable
+                                    restockPopup.open(); // Execute clinical workflow step
+                                } // Close active scope block
+                            } // Close active scope block
+                        } // Close active scope block
+                    } // Close active scope block
+                } // Close active scope block
+            } // Close active scope block
 
             // TAB 2: Add New Item
-            ScrollView {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+            ScrollView { // Execute clinical workflow step
+                Layout.fillWidth: true // Execute clinical workflow step
+                Layout.fillHeight: true // Execute clinical workflow step
 
-                ColumnLayout {
-                    width: parent.width
-                    spacing: 12
+                ColumnLayout { // Execute clinical workflow step
+                    width: parent.width // Execute clinical workflow step
+                    spacing: 12 // Execute clinical workflow step
 
-                    Label {
-                        text: "Add New Supply Item to Catalog"
-                        font.bold: true
-                        font.pixelSize: 16
-                    }
+                    Label { // Execute clinical workflow step
+                        text: "Add New Supply Item to Catalog" // Execute clinical workflow step
+                        font.bold: true // Execute clinical workflow step
+                        font.pixelSize: 16 // Execute clinical workflow step
+                    } // Close active scope block
 
-                    TextField {
-                        id: newSku
-                        placeholderText: "SKU Code (e.g. MED-AMOX-250)"
-                        Layout.fillWidth: true
-                    }
+                    TextField { // Execute clinical workflow step
+                        id: newSku // Execute clinical workflow step
+                        placeholderText: "SKU Code (e.g. MED-AMOX-250)" // Execute clinical workflow step
+                        Layout.fillWidth: true // Execute clinical workflow step
+                    } // Close active scope block
 
-                    TextField {
-                        id: newName
-                        placeholderText: "Item / Drug Name (e.g. Amoxicillin 250mg)"
-                        Layout.fillWidth: true
-                    }
+                    TextField { // Execute clinical workflow step
+                        id: newName // Execute clinical workflow step
+                        placeholderText: "Item / Drug Name (e.g. Amoxicillin 250mg)" // Execute clinical workflow step
+                        Layout.fillWidth: true // Execute clinical workflow step
+                    } // Close active scope block
 
-                    TextField {
-                        id: newCategory
-                        placeholderText: "Category (e.g. Antibiotics, Analgesic, Supplies)"
-                        Layout.fillWidth: true
-                    }
+                    TextField { // Execute clinical workflow step
+                        id: newCategory // Execute clinical workflow step
+                        placeholderText: "Category (e.g. Antibiotics, Analgesic, Supplies)" // Execute clinical workflow step
+                        Layout.fillWidth: true // Execute clinical workflow step
+                    } // Close active scope block
 
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: 12
+                    RowLayout { // Execute clinical workflow step
+                        Layout.fillWidth: true // Execute clinical workflow step
+                        spacing: 12 // Execute clinical workflow step
 
-                        ColumnLayout {
-                            Layout.fillWidth: true
-                            Label { text: "Unit Price (EUR):" }
-                            TextField {
-                                id: newPrice
-                                Layout.fillWidth: true
-                                text: "9.99"
-                                validator: DoubleValidator { bottom: 0.01; decimals: 2 }
-                            }
-                        }
+                        ColumnLayout { // Execute clinical workflow step
+                            Layout.fillWidth: true // Execute clinical workflow step
+                            Label { text: "Unit Price (EUR):" } // Execute clinical workflow step
+                            TextField { // Execute clinical workflow step
+                                id: newPrice // Execute clinical workflow step
+                                Layout.fillWidth: true // Execute clinical workflow step
+                                text: "9.99" // Execute clinical workflow step
+                                validator: DoubleValidator { bottom: 0.01; decimals: 2 } // Execute clinical workflow step
+                            } // Close active scope block
+                        } // Close active scope block
 
-                        ColumnLayout {
-                            Layout.fillWidth: true
-                            Label { text: "Initial Stock:" }
-                            SpinBox {
-                                id: newStock
-                                Layout.fillWidth: true
-                                from: 0
-                                to: 10000
-                                value: 50
-                            }
-                        }
+                        ColumnLayout { // Execute clinical workflow step
+                            Layout.fillWidth: true // Execute clinical workflow step
+                            Label { text: "Initial Stock:" } // Execute clinical workflow step
+                            SpinBox { // Execute clinical workflow step
+                                id: newStock // Execute clinical workflow step
+                                Layout.fillWidth: true // Execute clinical workflow step
+                                from: 0 // Execute clinical workflow step
+                                to: 10000 // Execute clinical workflow step
+                                value: 50 // Execute clinical workflow step
+                            } // Close active scope block
+                        } // Close active scope block
 
-                        ColumnLayout {
-                            Layout.fillWidth: true
-                            Label { text: "Reorder Threshold:" }
-                            SpinBox {
-                                id: newThreshold
-                                Layout.fillWidth: true
-                                from: 1
-                                to: 500
-                                value: 15
-                            }
-                        }
-                    }
+                        ColumnLayout { // Execute clinical workflow step
+                            Layout.fillWidth: true // Execute clinical workflow step
+                            Label { text: "Reorder Threshold:" } // Execute clinical workflow step
+                            SpinBox { // Execute clinical workflow step
+                                id: newThreshold // Execute clinical workflow step
+                                Layout.fillWidth: true // Execute clinical workflow step
+                                from: 1 // Execute clinical workflow step
+                                to: 500 // Execute clinical workflow step
+                                value: 15 // Execute clinical workflow step
+                            } // Close active scope block
+                        } // Close active scope block
+                    } // Close active scope block
 
-                    TextField {
-                        id: newUnit
-                        placeholderText: "Unit of Measure (e.g. box, bottle, roll, ampoule)"
-                        Layout.fillWidth: true
-                    }
+                    TextField { // Execute clinical workflow step
+                        id: newUnit // Execute clinical workflow step
+                        placeholderText: "Unit of Measure (e.g. box, bottle, roll, ampoule)" // Execute clinical workflow step
+                        Layout.fillWidth: true // Execute clinical workflow step
+                    } // Close active scope block
 
-                    Button {
-                        text: "Create Item"
-                        highlighted: true
-                        Layout.fillWidth: true
-                        onClicked: {
-                            if (newSku.text.trim().length > 0 && newName.text.trim().length > 0) {
-                                controller.createItem(
-                                    newSku.text,
-                                    newName.text,
-                                    newCategory.text,
-                                    parseFloat(newPrice.text) || 0.0,
-                                    newStock.value,
-                                    newThreshold.value,
-                                    newUnit.text
-                                );
-                                newSku.text = "";
-                                newName.text = "";
-                                newCategory.text = "";
-                                root.activeTab = 0;
-                            }
-                        }
-                    }
-                }
-            }
+                    Button { // Execute clinical workflow step
+                        text: "Create Item" // Execute clinical workflow step
+                        highlighted: true // Execute clinical workflow step
+                        Layout.fillWidth: true // Execute clinical workflow step
+                        onClicked: { // Execute clinical workflow step
+                            if (newSku.text.trim().length > 0 && newName.text.trim().length > 0) { // Evaluate conditional expression to branch execution flow
+                                controller.createItem( // Execute clinical workflow step
+                                    newSku.text, // Execute clinical workflow step
+                                    newName.text, // Execute clinical workflow step
+                                    newCategory.text, // Execute clinical workflow step
+                                    parseFloat(newPrice.text) || 0.0, // Execute clinical workflow step
+                                    newStock.value, // Execute clinical workflow step
+                                    newThreshold.value, // Execute clinical workflow step
+                                    newUnit.text // Execute clinical workflow step
+                                ); // Execute clinical workflow step
+                                newSku.text = ""; // Assign value to target variable
+                                newName.text = ""; // Assign value to target variable
+                                newCategory.text = ""; // Assign value to target variable
+                                root.activeTab = 0; // Assign value to target variable
+                            } // Close active scope block
+                        } // Close active scope block
+                    } // Close active scope block
+                } // Close active scope block
+            } // Close active scope block
 
             // TAB 3: Settings Page
-            ColumnLayout {
-                spacing: 16
+            ColumnLayout { // Execute clinical workflow step
+                spacing: 16 // Execute clinical workflow step
 
-                Label {
-                    text: "Application & Server Configuration"
-                    font.bold: true
-                    font.pixelSize: 18
-                }
+                Label { // Execute clinical workflow step
+                    text: "Application & Server Configuration" // Execute clinical workflow step
+                    font.bold: true // Execute clinical workflow step
+                    font.pixelSize: 18 // Execute clinical workflow step
+                } // Close active scope block
 
-                Label {
-                    text: "Change the backend server IP/URL without recompiling the application. Persisted to config.ini."
-                    color: "#64748b"
-                    font.pixelSize: 13
-                }
+                Label { // Execute clinical workflow step
+                    text: "Change the backend server IP/URL without recompiling the application. Persisted to config.ini." // Execute clinical workflow step
+                    color: "#64748b" // Execute clinical workflow step
+                    font.pixelSize: 13 // Execute clinical workflow step
+                } // Close active scope block
 
-                GroupBox {
-                    title: "Clinic Server Endpoint"
-                    Layout.fillWidth: true
+                GroupBox { // Execute clinical workflow step
+                    title: "Clinic Server Endpoint" // Execute clinical workflow step
+                    Layout.fillWidth: true // Execute clinical workflow step
 
-                    ColumnLayout {
-                        anchors.fill: parent
-                        spacing: 10
+                    ColumnLayout { // Execute clinical workflow step
+                        anchors.fill: parent // Execute clinical workflow step
+                        spacing: 10 // Execute clinical workflow step
 
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: 8
+                        RowLayout { // Execute clinical workflow step
+                            Layout.fillWidth: true // Execute clinical workflow step
+                            spacing: 8 // Execute clinical workflow step
 
-                            TextField {
-                                id: serverUrlInput
-                                text: controller.serverUrl
+                            TextField { // Execute clinical workflow step
+                                id: serverUrlInput // Execute clinical workflow step
+                                text: controller.serverUrl // Execute clinical workflow step
                                 placeholderText: "http://<server-ip>:8080/api/v1"
-                                Layout.fillWidth: true
-                            }
+                                Layout.fillWidth: true // Execute clinical workflow step
+                            } // Close active scope block
 
-                            Button {
-                                text: "Test Connection"
-                                onClicked: controller.testConnection(serverUrlInput.text)
-                            }
-                        }
+                            Button { // Execute clinical workflow step
+                                text: "Test Connection" // Execute clinical workflow step
+                                onClicked: controller.testConnection(serverUrlInput.text) // Execute clinical workflow step
+                            } // Close active scope block
+                        } // Close active scope block
 
-                        Label {
-                            text: controller.connectionStatus.length > 0 ? controller.connectionStatus : "Enter server URL and click Test Connection."
-                            font.pixelSize: 12
-                            color: controller.connectionStatus.includes("Connected") ? "#16a34a" : "#dc2626"
-                        }
-                    }
-                }
+                        Label { // Execute clinical workflow step
+                            text: controller.connectionStatus.length > 0 ? controller.connectionStatus : "Enter server URL and click Test Connection." // Execute clinical workflow step
+                            font.pixelSize: 12 // Execute clinical workflow step
+                            color: controller.connectionStatus.includes("Connected") ? "#16a34a" : "#dc2626" // Execute clinical workflow step
+                        } // Close active scope block
+                    } // Close active scope block
+                } // Close active scope block
 
-                RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 12
+                RowLayout { // Execute clinical workflow step
+                    Layout.fillWidth: true // Execute clinical workflow step
+                    spacing: 12 // Execute clinical workflow step
 
-                    Button {
-                        text: "Save & Apply Settings"
-                        highlighted: true
-                        onClicked: {
-                            controller.saveServerUrl(serverUrlInput.text);
-                            controller.refreshData();
-                            root.activeTab = 0;
-                        }
-                    }
+                    Button { // Execute clinical workflow step
+                        text: "Save & Apply Settings" // Execute clinical workflow step
+                        highlighted: true // Execute clinical workflow step
+                        onClicked: { // Execute clinical workflow step
+                            controller.saveServerUrl(serverUrlInput.text); // Execute clinical workflow step
+                            controller.refreshData(); // Execute clinical workflow step
+                            root.activeTab = 0; // Assign value to target variable
+                        } // Close active scope block
+                    } // Close active scope block
 
-                    Button {
-                        text: "Reset to Default"
-                        onClicked: {
+                    Button { // Execute clinical workflow step
+                        text: "Reset to Default" // Execute clinical workflow step
+                        onClicked: { // Execute clinical workflow step
                             serverUrlInput.text = "http://localhost:8080/api/v1";
-                            controller.saveServerUrl(serverUrlInput.text);
-                            controller.refreshData();
-                        }
-                    }
-                }
+                            controller.saveServerUrl(serverUrlInput.text); // Execute clinical workflow step
+                            controller.refreshData(); // Execute clinical workflow step
+                        } // Close active scope block
+                    } // Close active scope block
+                } // Close active scope block
 
-                Item { Layout.fillHeight: true }
-            }
-        }
+                Item { Layout.fillHeight: true } // Execute clinical workflow step
+            } // Close active scope block
+        } // Close active scope block
 
         // Status Bar
-        Rectangle {
-            Layout.fillWidth: true
-            height: 32
-            color: "#f1f5f9"
-            border.color: "#cbd5e1"
-            radius: 4
+        Rectangle { // Execute clinical workflow step
+            Layout.fillWidth: true // Execute clinical workflow step
+            height: 32 // Execute clinical workflow step
+            color: "#f1f5f9" // Execute clinical workflow step
+            border.color: "#cbd5e1" // Execute clinical workflow step
+            radius: 4 // Execute clinical workflow step
 
-            Label {
-                anchors.centerIn: parent
-                text: controller.statusMessage.length > 0 ? controller.statusMessage : "Ready"
-                font.pixelSize: 12
-            }
-        }
-    }
+            Label { // Execute clinical workflow step
+                anchors.centerIn: parent // Execute clinical workflow step
+                text: controller.statusMessage.length > 0 ? controller.statusMessage : "Ready" // Execute clinical workflow step
+                font.pixelSize: 12 // Execute clinical workflow step
+            } // Close active scope block
+        } // Close active scope block
+    } // Close active scope block
 
     // Restock Popup Dialog
-    Popup {
-        id: restockPopup
-        anchors.centerIn: parent
-        width: 420
-        height: 300
-        modal: true
-        focus: true
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+    Popup { // Execute clinical workflow step
+        id: restockPopup // Execute clinical workflow step
+        anchors.centerIn: parent // Execute clinical workflow step
+        width: 420 // Execute clinical workflow step
+        height: 300 // Execute clinical workflow step
+        modal: true // Execute clinical workflow step
+        focus: true // Execute clinical workflow step
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside // Execute clinical workflow step
 
-        contentItem: ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: 16
-            spacing: 12
+        contentItem: ColumnLayout { // Execute clinical workflow step
+            anchors.fill: parent // Execute clinical workflow step
+            anchors.margins: 16 // Execute clinical workflow step
+            spacing: 12 // Execute clinical workflow step
 
-            Label {
-                text: "Restock Supply Item"
-                font.bold: true
-                font.pixelSize: 16
-            }
+            Label { // Execute clinical workflow step
+                text: "Restock Supply Item" // Execute clinical workflow step
+                font.bold: true // Execute clinical workflow step
+                font.pixelSize: 16 // Execute clinical workflow step
+            } // Close active scope block
 
-            Label {
-                text: root.selectedRestockItem ? (root.selectedRestockItem.name + " (" + root.selectedRestockItem.sku + ")") : ""
-                font.bold: true
-                color: "#1e293b"
-            }
+            Label { // Execute clinical workflow step
+                text: root.selectedRestockItem ? (root.selectedRestockItem.name + " (" + root.selectedRestockItem.sku + ")") : "" // Execute clinical workflow step
+                font.bold: true // Execute clinical workflow step
+                color: "#1e293b" // Execute clinical workflow step
+            } // Close active scope block
 
-            Label {
-                text: root.selectedRestockItem ? ("Current Stock: " + root.selectedRestockItem.stock_quantity + " " + root.selectedRestockItem.unit) : ""
-                color: "#64748b"
-                font.pixelSize: 12
-            }
+            Label { // Execute clinical workflow step
+                text: root.selectedRestockItem ? ("Current Stock: " + root.selectedRestockItem.stock_quantity + " " + root.selectedRestockItem.unit) : "" // Execute clinical workflow step
+                color: "#64748b" // Execute clinical workflow step
+                font.pixelSize: 12 // Execute clinical workflow step
+            } // Close active scope block
 
-            RowLayout {
-                spacing: 8
-                Label { text: "Quantity to add:" }
-                SpinBox {
-                    id: restockQtySpin
-                    from: 1
-                    to: 10000
-                    value: 20
-                }
-            }
+            RowLayout { // Execute clinical workflow step
+                spacing: 8 // Execute clinical workflow step
+                Label { text: "Quantity to add:" } // Execute clinical workflow step
+                SpinBox { // Execute clinical workflow step
+                    id: restockQtySpin // Execute clinical workflow step
+                    from: 1 // Execute clinical workflow step
+                    to: 10000 // Execute clinical workflow step
+                    value: 20 // Execute clinical workflow step
+                } // Close active scope block
+            } // Close active scope block
 
-            TextField {
-                id: restockReasonInput
-                placeholderText: "Reason / Delivery batch reference..."
-                Layout.fillWidth: true
-            }
+            TextField { // Execute clinical workflow step
+                id: restockReasonInput // Execute clinical workflow step
+                placeholderText: "Reason / Delivery batch reference..." // Execute clinical workflow step
+                Layout.fillWidth: true // Execute clinical workflow step
+            } // Close active scope block
 
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 12
+            RowLayout { // Execute clinical workflow step
+                Layout.fillWidth: true // Execute clinical workflow step
+                spacing: 12 // Execute clinical workflow step
 
-                Button {
-                    text: "Cancel"
-                    onClicked: restockPopup.close()
-                }
+                Button { // Execute clinical workflow step
+                    text: "Cancel" // Execute clinical workflow step
+                    onClicked: restockPopup.close() // Execute clinical workflow step
+                } // Close active scope block
 
-                Item { Layout.fillWidth: true }
+                Item { Layout.fillWidth: true } // Execute clinical workflow step
 
-                Button {
-                    text: "Confirm Restock"
-                    highlighted: true
-                    onClicked: {
-                        if (root.selectedRestockItem && restockReasonInput.text.trim().length > 0) {
-                            controller.restockItem(root.selectedRestockItem.id, restockQtySpin.value, restockReasonInput.text);
-                            restockPopup.close();
-                        }
-                    }
-                }
-            }
-        }
-    }
+                Button { // Execute clinical workflow step
+                    text: "Confirm Restock" // Execute clinical workflow step
+                    highlighted: true // Execute clinical workflow step
+                    onClicked: { // Execute clinical workflow step
+                        if (root.selectedRestockItem && restockReasonInput.text.trim().length > 0) { // Evaluate conditional expression to branch execution flow
+                            controller.restockItem(root.selectedRestockItem.id, restockQtySpin.value, restockReasonInput.text); // Execute clinical workflow step
+                            restockPopup.close(); // Execute clinical workflow step
+                        } // Close active scope block
+                    } // Close active scope block
+                } // Close active scope block
+            } // Close active scope block
+        } // Close active scope block
+    } // Close active scope block
 
-    Component.onCompleted: {
-        controller.refreshData();
-    }
-}
+    Component.onCompleted: { // Execute clinical workflow step
+        controller.refreshData(); // Execute clinical workflow step
+    } // Close active scope block
+} // Close active scope block
